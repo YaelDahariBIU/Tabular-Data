@@ -31,4 +31,4 @@ To run the code, follow these steps:
 	pip install -r requirements.txt
 	```
 
-4. Run 'part1.ipynb' in your favorite code editor.
+4. Run `part1.ipynb` in your favorite code editor.
