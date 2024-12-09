@@ -10,6 +10,8 @@ We created a pipeline to transform the dataset, filling missing values, creating
 
 Later, we trained a simple Linear Regression model on the transformed train and test datasets and analyzed the model's errors.
 
+* Note: The SHAP-library generated graphs in the graphs directory are not exported well. Please refer to the norebook to see these plots properly.
+
 ## How to run the code
 
 To run the code, follow these steps:
