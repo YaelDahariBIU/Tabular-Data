@@ -3,5 +3,5 @@ pandas
 seaborn
 scikit-learn
 matplotlib
-ipykernel
 shap
+category_encoders
