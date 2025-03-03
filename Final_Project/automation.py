@@ -424,7 +424,7 @@ def main():
     print("\nNull values in the data:")
     show_nulls(df_train, df_test)
     
-    print("""\nNow you can choose an attribute to impute.\nHowever, if you choose an attribute that has a low percentage of null values, the imputations method won't improve the scores by much.\nIf you want to stop the process, enter "stop" when asked to enter an attribute.\n""")
+    print("""\nNow you can choose an attribute to impute.\nHowever, if you choose an attribute that has a low percentage of null values, the imputations method won't improve the scores by much.\nIf you want to stop the process, enter "q" when asked.\n""")
     
     tr_and_tst_per_attr = []
     
@@ -433,10 +433,10 @@ def main():
     
     while True:
         # Choose the attribute to impute
-        attribute = input("Enter the attribute to impute: ")
+        attribute = input("Enter the attribute to impute (or 'q' to stop): ")
         
         # If the user wants to stop
-        if attribute == 'stop':
+        if attribute == 'q':
             break
         
         # Check if the attribute is categorical
