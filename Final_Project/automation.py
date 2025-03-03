@@ -23,7 +23,28 @@ def load_data(file_path):
     return df
 
 """ Explore the nulls in the data """
-def show_nulls(df_train, df_test):
+def show_nulls(df_train, df_test, iszero=False):
+    if iszero:
+        print('Train data: ')
+        train_zeros = (df_train == 0).sum()
+        train_zeros_percentage = (train_zeros / len(df_train)) * 100
+        train_zeros_percentage = train_zeros_percentage.round(3)
+        train_zeros_percentage = train_zeros_percentage.astype(str) + '%'
+        train_zeros_info = pd.concat([train_zeros[train_zeros > 0], train_zeros_percentage[train_zeros > 0]], axis=1)
+        train_zeros_info.columns = ['Zero Count', 'Percentage']
+        print(train_zeros_info)
+        
+        print()
+        print('Test data: ')
+        test_zeros = (df_test == 0).sum()
+        test_zeros_percentage = (test_zeros / len(df_test)) * 100
+        test_zeros_percentage = test_zeros_percentage.round(3)
+        test_zeros_percentage = test_zeros_percentage.astype(str) + '%'
+        test_zeros_info = pd.concat([test_zeros[test_zeros > 0], test_zeros_percentage[test_zeros > 0]], axis=1)
+        test_zeros_info.columns = ['Zero Count', 'Percentage']
+        print(test_zeros_info)
+        return
+        
     print('Train data:')
     train_nulls = df_train.isnull().sum()
     train_nulls_percentage = (train_nulls / len(df_train)) * 100
@@ -44,6 +65,26 @@ def show_nulls(df_train, df_test):
     print(test_nulls_info)
     
     return
+
+""" Artificially creating missing values """
+
+# Create missing values in the data using the Missing Completely at Random (MCAR) mechanism
+def create_mcar(df_train, df_test, attributes, percentages):    
+    for attribute, percentage in zip(attributes, percentages):
+        percentage = float(percentage) / 100  # Convert percentage to a fraction
+        
+         # Randomly select rows to set as NaN
+        missing_train = np.random.choice(df_train.index, 
+                                         size=int(percentage * len(df_train)), 
+                                         replace=False)
+        missing_test = np.random.choice(df_test.index, 
+                                        size=int(percentage * len(df_test)), 
+                                        replace=False)
+        
+        df_train.loc[missing_train, attribute] = np.nan
+        df_test.loc[missing_test, attribute] = np.nan
+
+    return df_train, df_test, missing_train, missing_test
 
 """ Dealing with missing values """
 
@@ -160,25 +201,26 @@ def fill_with_linear_regression(df_train, df_test, attribute, target):
 
 """ Training the model and making predictions """
 def train_and_predict(df_train, df_test, target):
-	X_train = df_train.drop(columns=target)
-	# If there are any categorical columns, convert them to numerical using one-hot encoding
-	if df_train.select_dtypes(include='object').shape[1] > 0:
-		X_train = pd.get_dummies(X_train, drop_first=True)
-	X_train = X_train.fillna(-1)
-	
-	y_train = df_train[target]
-	X_test = df_test.drop(columns=target)
-	# If there are any categorical columns, convert them to numerical using one-hot encoding
-	if df_test.select_dtypes(include='object').shape[1] > 0:
-		X_test = pd.get_dummies(X_test, drop_first=True)
-	X_test = X_test.fillna(-1)
-	y_test = df_test[target]
-	
-	linear_reg = LinearRegression()
-	linear_reg.fit(X_train, y_train)
-	y_pred = linear_reg.predict(X_test)
-		
-	return y_test, y_pred
+    X_train = df_train.drop(columns=target)
+    encoder = ce.OrdinalEncoder()
+    # If there are any categorical columns, convert them to numerical using one-hot encoding
+    if df_train.select_dtypes(include='object').shape[1] > 0:
+        X_train = encoder.fit_transform(X_train)
+    X_train = X_train.fillna(-1)
+    
+    y_train = df_train[target]
+    X_test = df_test.drop(columns=target)
+    # If there are any categorical columns, convert them to numerical using one-hot encoding
+    if df_test.select_dtypes(include='object').shape[1] > 0:
+        X_test = encoder.transform(X_test)
+    X_test = X_test.fillna(-1)
+    y_test = df_test[target]
+    
+    linear_reg = LinearRegression()
+    linear_reg.fit(X_train, y_train)
+    y_pred = linear_reg.predict(X_test)
+    
+    return y_test, y_pred
 
 """ Evaluating the model """
 
@@ -243,8 +285,7 @@ def try_all_methods(df_train, df_test, attribute, target, is_categorical):
 
 """ Comparing the performance of different methods """
 
-def compare_fills(df_train, df_test, attribute, target, is_categorical):
-    df_array = try_all_methods(df_train, df_test, attribute, target, is_categorical)
+def compare_fills(df_array, target):
     methods = ['Random', 'Mean', 'Median', 'Frequent', 'KNN', 'Linear Regression', 'Drop']
     r2_scores = np.zeros(len(df_array) // 2)
     mse_scores = np.zeros(len(df_array) // 2)
@@ -268,9 +309,50 @@ def compare_fills(df_train, df_test, attribute, target, is_categorical):
     
     return r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores
 
+# Compare the imputed data to the original data
+def compare_to_org(org_train, org_test, df_array, attribute, is_categorical, missing_train, missing_test):
+    sim_scores = np.zeros(len(df_array) // 2)
+    
+    if is_categorical:  
+        for i in range(0, len(df_array) - 2, 2):
+            imputed_train = df_array[i].loc[missing_train, attribute]
+            imputed_test = df_array[i+1].loc[missing_test, attribute]
+            
+            original_train = org_train.loc[missing_train, attribute]
+            original_test = org_test.loc[missing_test, attribute]
+
+            # Calculate categorical similarity (fraction of correctly imputed values)
+            sim_train = (imputed_train == original_train).mean()
+            sim_test = (imputed_test == original_test).mean()
+            
+            sim_scores[i // 2] = (sim_train + sim_test) / 2
+            
+    else:
+        # Get attribute range to normalize numerical differences
+        min_val = min(org_train[attribute].min(), org_test[attribute].min())
+        max_val = max(org_train[attribute].max(), org_test[attribute].max())
+        value_range = max_val - min_val if max_val != min_val else 1  # Avoid division by zero
+        
+        for i in range(0, len(df_array) - 2, 2):            
+            imputed_train = df_array[i].loc[missing_train, attribute]
+            imputed_test = df_array[i+1].loc[missing_test, attribute]
+            
+            original_train = org_train.loc[missing_train, attribute]
+            original_test = org_test.loc[missing_test, attribute]
+
+            # Compute Mean Absolute Error and normalize it
+            mae_train = np.abs(imputed_train - original_train).mean() / value_range
+            mae_test = np.abs(imputed_test - original_test).mean() / value_range
+
+            # Convert MAE into a similarity score (higher is better, bound in [0,1])
+            sim_scores[i // 2] = 1 - (mae_train + mae_test) / 2
+            
+    sim_scores[-1] = np.nan # Drop method has no imputed values
+    return sim_scores
+
 """ Plotting the scores """
 
-def print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores):
+def print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores, sim_scores=None):
     mape_scores = np.array(mape_scores) * 100
     mape_scores = np.round(mape_scores, 3)
     mape_scores = mape_scores.astype(str) + '%'
@@ -281,8 +363,14 @@ def print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores):
         'MSE Score': np.round(mse_scores, 3),
         'RMSE Score': np.round(rmse_scores, 3),
         'MAPE Score': mape_scores,
-        'MAE Score': np.round(mae_scores, 3)
+        'MAE Score': np.round(mae_scores, 3),
+        'Similarity Score': sim_scores
     }, index=methods)
+    
+    if sim_scores is None:
+        scores.drop(columns=['Similarity Score'], inplace=True)
+    else:
+        scores['Similarity Score'] = np.round(scores['Similarity Score'], 3)
     
     print("\033[1mError Evaluation Metrics for Different Methods:\033[0m")
     print(scores)
@@ -308,10 +396,27 @@ def main():
     path_test = input("Enter the test data file path: ")
     df_test = load_data(path_test)
     
-    # Explore the nulls in the data
-    print()
-    print('Null values in the data:')
-    show_nulls(df_train, df_test)
+    org_train = df_train.copy()
+    org_test = df_test.copy()
+    
+    # Create missing values in the data
+    is_mcar = input("Do you wish to generate missing values in the data? (yes/no): ")
+    if is_mcar == 'yes':
+        attributes = input("Enter the attributes to generate missing values (separated by commas): ").split(',')
+        percentages = input("Enter the percentages of missing values to generate (separated by commas): ").split(',')
+        df_train, df_test, missing_train, missing_test = create_mcar(df_train, df_test, attributes, percentages) # Create missing values in the data
+        
+        print("\nNull values in the data:")
+        show_nulls(df_train, df_test) # Explore the nulls in the data
+    
+    else:
+        # Explore the nulls in the data
+        iszero = input("Is the null value represented as 0? (yes/no): ")
+        print("\nNull values in the data:")
+        if iszero == 'yes':
+            show_nulls(df_train, df_test, iszero=True)
+        else:
+            show_nulls(df_train, df_test)
     
     print("""\nNow you can choose an attribute to impute.\nHowever, if you choose an attribute that has a low percentage of null values, the imputations method won't improve the scores by much.\nIf you want to stop the process, enter "stop" when asked to enter an attribute.\n""")
     
@@ -331,11 +436,19 @@ def main():
         # Choose the target attribute
         target = input("Enter the target attribute: ")
         
+        # Impute the missing values using different methods
+        df_array = try_all_methods(df_train, df_test, attribute, target, is_categorical)
+        
         # Compare the performance of different methods
-        r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores = compare_fills(df_train, df_test, attribute, target, is_categorical)
+        r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores = compare_fills(df_array, target)
+        
+        # If we used MCAR to generate missing data, we should also evaluate the imputed data comppared to the original
+        sim_scores = None
+        if is_mcar == 'yes':
+            sim_scores = compare_to_org(org_train, org_test, df_array, attribute, is_categorical, missing_train, missing_test)
         
         # Print the scores
-        print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores)
+        print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores, sim_scores)
         
         # Provide explanations for the advantages and disadvantages of the different methods
         print("\n\033[1mAdvantages and disadvantages of the different methods to consider:\033[0m")

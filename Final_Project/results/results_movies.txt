@@ -1,0 +1,142 @@
+Enter the train data file path: C:\Users\Yael Dahari\Tabular-Data\Final_Project\data\dataset_movies_train.csv 
+Enter the test data file path: C:\Users\Yael Dahari\Tabular-Data\Final_Project\data\dataset_movies_test.csv  
+Do you wish to generate missing values in the data? (yes/no): yes
+Enter the attributes to generate missing values (separated by commas): budget,original_language,vote_average,popularity
+Enter the percentages of missing values to generate (sepRted by commas): 27,32,36,25                                                                   
+
+Null values in the data:
+Train data:
+                   Null Count Percentage
+original_language        1374    31.998%
+budget                   1159    26.991%
+popularity               1073    24.988%
+vote_average             1545     35.98%
+
+Test data:
+                   Null Count Percentage
+original_language         343    31.937%
+budget                    289    26.909%
+popularity                268    24.953%
+vote_average              386     35.94%
+
+Now you can choose an attribute to impute.
+However, if you choose an attribute that has a low percentage of null values, the imputations method won't improve the scores by much.
+If you want to stop the process, enter "stop" when asked to enter an attribute.
+
+Enter the attribute to impute: budget
+Enter the target attribute: revenue
+Error Evaluation Metrics for Different Methods:
+                   R2 Score     MSE Score    RMSE Score    MAPE Score     MAE Score  Similarity Score
+Random                0.664  1.381225e+16  1.175255e+08  5790013.897%  6.506225e+07      7.403567e+07
+Mean                  0.694  1.259409e+16  1.122234e+08  4306952.785%  5.643331e+07      7.423341e+06
+Median                0.690  1.273168e+16  1.128348e+08  3159940.649%  5.644162e+07      6.808218e+06
+Frequent              0.691  1.270422e+16  1.127130e+08  3274341.198%  5.632545e+07      6.830893e+06
+KNN                   0.694  1.259409e+16  1.122234e+08  4306952.785%  5.643331e+07      7.423341e+06
+Linear Regression     0.683  1.302802e+16  1.141403e+08  2692792.717%  5.851715e+07               NaN
+Drop                  0.751  8.567070e+15  9.255847e+07  1362438.053%  4.771638e+07      3.438348e+07
+
+Advantages and disadvantages of the different methods to consider:
+Random: This was the baseline method. It is simple and fast, but it does not take into account the relationships between the attributes and the distribution of the data.
+If you have a large dataset and the missing values are not significant, this method can be used.
+Also, if the results of the other methods are not significantly better, this method can be used as a fallback.
+
+Mean: This method is simple and fast. It is useful when the data is normally distributed and the missing values are not significant. However, it can cause some distortion in the data.
+Let's consider an example of cars dataset and say the horsepower attribute has missing values. If we fill the missing values with the mean of the horsepower, it may distort the data because both a luxury car and an economy car will get the same horsepower value.
+
+Median: This method is similar to the mean method, but it is more robust to outliers. It is useful when the data is skewed and the missing values are not significant. However, it can also cause some distortion in the data.
+
+Frequent: This method is useful when the data is categorical and the missing values are not significant. It is simple and fast, but it can cause some distortion in the data.        
+
+KNN: This method is useful when the data has a complex relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it is computationally expensive and may not work well with high-dimensional data.
+
+Linear Regression: This method is useful when the data has a linear relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it may not work well with non-linear data and may cause overfitting of the data.
+
+Drop: This method is useful when the missing values are insignificant and cannot be imputed. It is simple and fast, but it can cause a loss of information. It should be used when the amount of missing values is small or as a last resort.
+Enter the attribute to impute: vote_average
+Enter the target attribute: revenue
+Error Evaluation Metrics for Different Methods:
+                   R2 Score     MSE Score    RMSE Score    MAPE Score     MAE Score  Similarity Score
+Random                0.679  1.317965e+16  1.148027e+08  3592482.503%  6.025046e+07          0.560600
+Mean                  0.680  1.313563e+16  1.146108e+08  4877327.555%  5.979168e+07          0.258333
+Median                0.680  1.313560e+16  1.146106e+08  4888300.147%  5.979118e+07          0.258010
+Frequent              0.680  1.313332e+16  1.146007e+08   4707776.51%  5.977197e+07          0.265089
+KNN                   0.680  1.313563e+16  1.146108e+08  4877327.555%  5.979168e+07          0.258333
+Linear Regression     0.683  1.302802e+16  1.141403e+08  2692792.717%  5.851715e+07               NaN
+Drop                  0.607  1.769927e+16  1.330386e+08  6987910.579%  6.563911e+07          0.996014
+
+Advantages and disadvantages of the different methods to consider:
+Random: This was the baseline method. It is simple and fast, but it does not take into account the relationships between the attributes and the distribution of the data.
+If you have a large dataset and the missing values are not significant, this method can be used.
+Also, if the results of the other methods are not significantly better, this method can be used as a fallback.
+
+Mean: This method is simple and fast. It is useful when the data is normally distributed and the missing values are not significant. However, it can cause some distortion in the data.
+Let's consider an example of cars dataset and say the horsepower attribute has missing values. If we fill the missing values with the mean of the horsepower, it may distort the data because both a luxury car and an economy car will get the same horsepower value.
+
+Median: This method is similar to the mean method, but it is more robust to outliers. It is useful when the data is skewed and the missing values are not significant. However, it can also cause some distortion in the data.
+
+Frequent: This method is useful when the data is categorical and the missing values are not significant. It is simple and fast, but it can cause some distortion in the data.        
+
+KNN: This method is useful when the data has a complex relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it is computationally expensive and may not work well with high-dimensional data.
+
+Linear Regression: This method is useful when the data has a linear relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it may not work well with non-linear data and may cause overfitting of the data.
+
+Drop: This method is useful when the missing values are insignificant and cannot be imputed. It is simple and fast, but it can cause a loss of information. It should be used when the amount of missing values is small or as a last resort.
+Enter the attribute to impute: popularity
+Enter the target attribute: revenue
+Error Evaluation Metrics for Different Methods:
+                   R2 Score     MSE Score    RMSE Score    MAPE Score     MAE Score  Similarity Score
+Random                0.394  2.491528e+16  1.578457e+08  8082511.586%  1.025259e+08          8.459453
+Mean                  0.673  1.343390e+16  1.159047e+08  3042149.006%  5.911364e+07          1.087996
+Median                0.674  1.341454e+16  1.158212e+08  2996775.925%  5.905485e+07          1.076215
+Frequent              0.682  1.306971e+16  1.143228e+08  2686410.125%  5.841998e+07          1.818459
+KNN                   0.673  1.343390e+16  1.159047e+08  3042149.006%  5.911364e+07          1.087996
+Linear Regression     0.683  1.302802e+16  1.141403e+08  2692792.717%  5.851715e+07               NaN
+Drop                  0.631  1.640177e+16  1.280694e+08   3364335.51%  6.304553e+07          7.132214
+
+Advantages and disadvantages of the different methods to consider:
+Random: This was the baseline method. It is simple and fast, but it does not take into account the relationships between the attributes and the distribution of the data.
+If you have a large dataset and the missing values are not significant, this method can be used.
+Also, if the results of the other methods are not significantly better, this method can be used as a fallback.
+
+Mean: This method is simple and fast. It is useful when the data is normally distributed and the missing values are not significant. However, it can cause some distortion in the data.
+Let's consider an example of cars dataset and say the horsepower attribute has missing values. If we fill the missing values with the mean of the horsepower, it may distort the data because both a luxury car and an economy car will get the same horsepower value.
+
+Median: This method is similar to the mean method, but it is more robust to outliers. It is useful when the data is skewed and the missing values are not significant. However, it can also cause some distortion in the data.
+
+Frequent: This method is useful when the data is categorical and the missing values are not significant. It is simple and fast, but it can cause some distortion in the data.        
+
+KNN: This method is useful when the data has a complex relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it is computationally expensive and may not work well with high-dimensional data.
+
+Linear Regression: This method is useful when the data has a linear relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it may not work well with non-linear data and may cause overfitting of the data.
+
+Drop: This method is useful when the missing values are insignificant and cannot be imputed. It is simple and fast, but it can cause a loss of information. It should be used when the amount of missing values is small or as a last resort.
+Enter the attribute to impute: original_language
+Enter the target attribute: revenue
+Error Evaluation Metrics for Different Methods:
+                   R2 Score     MSE Score    RMSE Score    MAPE Score     MAE Score  Similarity Score
+Random                0.683  1.302485e+16  1.141265e+08  2613583.001%  5.846006e+07          0.280924
+Mean                  0.684  1.299531e+16  1.139970e+08  2238369.875%  5.805387e+07          0.054266
+Median                0.684  1.299522e+16  1.139966e+08  2224328.373%  5.805906e+07          0.038934
+Frequent              0.684  1.299522e+16  1.139966e+08  2224328.373%  5.805906e+07          0.038934
+KNN                   0.684  1.299531e+16  1.139970e+08  2238369.875%  5.805387e+07          0.054266
+Linear Regression     0.683  1.302802e+16  1.141403e+08  2692792.717%  5.851715e+07               NaN
+Drop                  0.660  1.440864e+16  1.200360e+08  4489398.696%  6.111975e+07          0.155300
+
+Advantages and disadvantages of the different methods to consider:
+Random: This was the baseline method. It is simple and fast, but it does not take into account the relationships between the attributes and the distribution of the data.
+If you have a large dataset and the missing values are not significant, this method can be used.
+Also, if the results of the other methods are not significantly better, this method can be used as a fallback.
+
+Mean: This method is simple and fast. It is useful when the data is normally distributed and the missing values are not significant. However, it can cause some distortion in the data.
+Let's consider an example of cars dataset and say the horsepower attribute has missing values. If we fill the missing values with the mean of the horsepower, it may distort the data because both a luxury car and an economy car will get the same horsepower value.
+
+Median: This method is similar to the mean method, but it is more robust to outliers. It is useful when the data is skewed and the missing values are not significant. However, it can also cause some distortion in the data.
+
+Frequent: This method is useful when the data is categorical and the missing values are not significant. It is simple and fast, but it can cause some distortion in the data.        
+
+KNN: This method is useful when the data has a complex relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it is computationally expensive and may not work well with high-dimensional data.
+
+Linear Regression: This method is useful when the data has a linear relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it may not work well with non-linear data and may cause overfitting of the data.
+
+Drop: This method is useful when the missing values are insignificant and cannot be imputed. It is simple and fast, but it can cause a loss of information. It should be used when the amount of missing values is small or as a last resort.
+Enter the attribute to impute: stop
