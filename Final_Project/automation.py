@@ -23,28 +23,7 @@ def load_data(file_path):
     return df
 
 """ Explore the nulls in the data """
-def show_nulls(df_train, df_test, iszero=False):
-    if iszero:
-        print('Train data: ')
-        train_zeros = (df_train == 0).sum()
-        train_zeros_percentage = (train_zeros / len(df_train)) * 100
-        train_zeros_percentage = train_zeros_percentage.round(3)
-        train_zeros_percentage = train_zeros_percentage.astype(str) + '%'
-        train_zeros_info = pd.concat([train_zeros[train_zeros > 0], train_zeros_percentage[train_zeros > 0]], axis=1)
-        train_zeros_info.columns = ['Zero Count', 'Percentage']
-        print(train_zeros_info)
-        
-        print()
-        print('Test data: ')
-        test_zeros = (df_test == 0).sum()
-        test_zeros_percentage = (test_zeros / len(df_test)) * 100
-        test_zeros_percentage = test_zeros_percentage.round(3)
-        test_zeros_percentage = test_zeros_percentage.astype(str) + '%'
-        test_zeros_info = pd.concat([test_zeros[test_zeros > 0], test_zeros_percentage[test_zeros > 0]], axis=1)
-        test_zeros_info.columns = ['Zero Count', 'Percentage']
-        print(test_zeros_info)
-        return
-        
+def show_nulls(df_train, df_test):        
     print('Train data:')
     train_nulls = df_train.isnull().sum()
     train_nulls_percentage = (train_nulls / len(df_train)) * 100
@@ -405,18 +384,10 @@ def main():
         attributes = input("Enter the attributes to generate missing values (separated by commas): ").split(',')
         percentages = input("Enter the percentages of missing values to generate (separated by commas): ").split(',')
         df_train, df_test, missing_train, missing_test = create_mcar(df_train, df_test, attributes, percentages) # Create missing values in the data
-        
-        print("\nNull values in the data:")
-        show_nulls(df_train, df_test) # Explore the nulls in the data
-    
-    else:
-        # Explore the nulls in the data
-        iszero = input("Is the null value represented as 0? (yes/no): ")
-        print("\nNull values in the data:")
-        if iszero == 'yes':
-            show_nulls(df_train, df_test, iszero=True)
-        else:
-            show_nulls(df_train, df_test)
+     
+    # Explore the nulls in the data
+    print("\nNull values in the data:")
+    show_nulls(df_train, df_test)
     
     print("""\nNow you can choose an attribute to impute.\nHowever, if you choose an attribute that has a low percentage of null values, the imputations method won't improve the scores by much.\nIf you want to stop the process, enter "stop" when asked to enter an attribute.\n""")
     
