@@ -23,7 +23,8 @@ def load_data(file_path):
     return df
 
 """ Saving the data """
-def save(path, df, index=False):
+def save(name, path, df, index=False):
+    path = path + name + "_imputed.csv"
     df.to_csv(path, index=index)
     print(f"Data saved to {path}")
     return
@@ -427,6 +428,9 @@ def main():
     
     tr_and_tst_per_attr = []
     
+    # Choose the target attribute
+    target = input("Enter the target attribute: ")
+    
     while True:
         # Choose the attribute to impute
         attribute = input("Enter the attribute to impute: ")
@@ -439,9 +443,6 @@ def main():
         is_categorical = False
         if df_train[attribute].dtype == 'object':
             is_categorical = True
-        
-        # Choose the target attribute
-        target = input("Enter the target attribute: ")
         
         # Impute the missing values using different methods
         df_array = try_all_methods(df_train, df_test, attribute, target, is_categorical)
@@ -498,8 +499,8 @@ Let's consider an example of cars dataset and say the horsepower attribute has m
         df_test.dropna(subset=to_drop, inplace=True)
         
     path = input("Enter the path to save the data: ")
-    save(path, df_train)
-    save(path, df_test)
+    save("train", path, df_train)
+    save("test", path, df_test)
     
 if __name__=="__main__":
     main()
