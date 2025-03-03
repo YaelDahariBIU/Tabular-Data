@@ -17,6 +17,24 @@ from scipy.stats import skew
 from statsmodels.api import OLS, add_constant
 from sklearn.preprocessing import PowerTransformer
 
+""" Tips for the user """
+def tips():
+    print("\n\033[1mAdvantages and disadvantages of the different methods to consider:\033[0m")
+    print("""\033[1mRandom:\033[0m This was the baseline method. It is simple and fast, but it does not take into account the relationships between the attributes and the distribution of the data.\nIf you have a large dataset and the missing values are not significant, this method can be used.\nAlso, if the results of the other methods are not significantly better, this method can be used as a fallback.
+              
+\033[1mMean:\033[0m This method is simple and fast. It is useful when the data is normally distributed and the missing values are not significant. However, it can cause some distortion in the data. 
+Let's consider an example of cars dataset and say the horsepower attribute has missing values. If we fill the missing values with the mean of the horsepower, it may distort the data because both a luxury car and an economy car will get the same horsepower value.
+                
+\033[1mMedian:\033[0m This method is similar to the mean method, but it is more robust to outliers. It is useful when the data is skewed and the missing values are not significant. However, it can also cause some distortion in the data. 
+                
+\033[1mFrequent:\033[0m This method is useful when the data is categorical and the missing values are not significant. It is simple and fast, but it can cause some distortion in the data.
+                
+\033[1mKNN:\033[0m This method is useful when the data has a complex relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it is computationally expensive and may not work well with high-dimensional data.
+                
+\033[1mLinear Regression:\033[0m This method is useful when the data has a linear relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it may not work well with non-linear data and may cause overfitting of the data.
+                
+\033[1mDrop:\033[0m This method is useful when the missing values are insignificant and cannot be imputed. It is simple and fast, but it can cause a loss of information. It should be used when the amount of missing values is small or as a last resort.""")
+
 """ Loading the data """
 def load_data(file_path):
     df = pd.read_csv(file_path)
@@ -459,21 +477,9 @@ def main():
         print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores, sim_scores)
         
         # Provide explanations for the advantages and disadvantages of the different methods
-        print("\n\033[1mAdvantages and disadvantages of the different methods to consider:\033[0m")
-        print("""\033[1mRandom:\033[0m This was the baseline method. It is simple and fast, but it does not take into account the relationships between the attributes and the distribution of the data.\nIf you have a large dataset and the missing values are not significant, this method can be used.\nAlso, if the results of the other methods are not significantly better, this method can be used as a fallback.
-              
-\033[1mMean:\033[0m This method is simple and fast. It is useful when the data is normally distributed and the missing values are not significant. However, it can cause some distortion in the data. 
-Let's consider an example of cars dataset and say the horsepower attribute has missing values. If we fill the missing values with the mean of the horsepower, it may distort the data because both a luxury car and an economy car will get the same horsepower value.
-                
-\033[1mMedian:\033[0m This method is similar to the mean method, but it is more robust to outliers. It is useful when the data is skewed and the missing values are not significant. However, it can also cause some distortion in the data. 
-                
-\033[1mFrequent:\033[0m This method is useful when the data is categorical and the missing values are not significant. It is simple and fast, but it can cause some distortion in the data.
-                
-\033[1mKNN:\033[0m This method is useful when the data has a complex relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it is computationally expensive and may not work well with high-dimensional data.
-                
-\033[1mLinear Regression:\033[0m This method is useful when the data has a linear relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it may not work well with non-linear data and may cause overfitting of the data.
-                
-\033[1mDrop:\033[0m This method is useful when the missing values are insignificant and cannot be imputed. It is simple and fast, but it can cause a loss of information. It should be used when the amount of missing values is small or as a last resort.""")
+        tip = input("Do you want to see the advantages and disadvantages of the different methods? (yes/no): ")
+        if tip == 'yes':
+            tips()
         
         # Ask the user which imputation method they would like to use
         method = int(input("Enter the method you would like to use (1 for Random, 2 for Mean, 3 for Median, 4 for Frequent, 5 for KNN, 6 for LR, 7 for Drop): "))
