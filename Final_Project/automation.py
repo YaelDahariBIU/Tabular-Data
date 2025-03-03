@@ -22,6 +22,12 @@ def load_data(file_path):
     df = pd.read_csv(file_path)
     return df
 
+""" Saving the data """
+def save(path, df, index=False):
+    df.to_csv(path, index=index)
+    print(f"Data saved to {path}")
+    return
+
 """ Explore the nulls in the data """
 def show_nulls(df_train, df_test):        
     print('Train data:')
@@ -366,6 +372,34 @@ def print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores, si
 #    BOLD = '\033[1m'
 #    UNDERLINE = '\033[4m'
 #    END = '\033[0m'
+
+""" Mapping the Methods to Indexes """
+class Method:
+    RANDOM = 0
+    MEAN = 2
+    MEDIAN = 4
+    FREQUENT = 6
+    KNN = 8
+    LINEAR_REGRESSION = 10
+    DROP = 12
+    
+""" Return the imputed data according to the chosen method """
+def get_imputed_data(df_array, method):
+    match method:
+        case 1:
+            return df_array[Method.RANDOM], df_array[Method.RANDOM + 1]
+        case 2:
+            return df_array[Method.MEAN], df_array[Method.MEAN + 1]
+        case 3:
+            return df_array[Method.MEDIAN], df_array[Method.MEDIAN + 1]
+        case 4:
+            return df_array[Method.FREQUENT], df_array[Method.FREQUENT + 1]
+        case 5:
+            return df_array[Method.KNN], df_array[Method.KNN + 1]
+        case 6:
+            return df_array[Method.LINEAR_REGRESSION], df_array[Method.LINEAR_REGRESSION + 1]
+        case 7:
+            return None, None
     
 """ User Interface """
 def main():
@@ -390,6 +424,8 @@ def main():
     show_nulls(df_train, df_test)
     
     print("""\nNow you can choose an attribute to impute.\nHowever, if you choose an attribute that has a low percentage of null values, the imputations method won't improve the scores by much.\nIf you want to stop the process, enter "stop" when asked to enter an attribute.\n""")
+    
+    tr_and_tst_per_attr = []
     
     while True:
         # Choose the attribute to impute
@@ -437,6 +473,33 @@ Let's consider an example of cars dataset and say the horsepower attribute has m
 \033[1mLinear Regression:\033[0m This method is useful when the data has a linear relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it may not work well with non-linear data and may cause overfitting of the data.
                 
 \033[1mDrop:\033[0m This method is useful when the missing values are insignificant and cannot be imputed. It is simple and fast, but it can cause a loss of information. It should be used when the amount of missing values is small or as a last resort.""")
-
+        
+        # Ask the user which imputation method they would like to use
+        method = int(input("Enter the method you would like to use (1 for Random, 2 for Mean, 3 for Median, 4 for Frequent, 5 for KNN, 6 for LR, 7 for Drop): "))
+        tr_and_tst_per_attr.append((attribute, get_imputed_data(df_array, method)))
+        
+    # Eventually, save the data according to the chosen methods for each attribute
+    to_drop = []
+    for attr, data in tr_and_tst_per_attr:
+        imputed_train = data[0]
+        imputed_test = data[1]
+        
+        # If the user chose the drop method, we need to remove the samples with null values in the attribute
+        if imputed_train is None:
+            to_drop.append(attr)
+            continue
+            
+        df_train[attr] = imputed_train[attr]
+        df_test[attr] = imputed_test[attr]
+        
+    # Drop the null values of the attributes in to_drop
+    if len(to_drop) > 0:
+        df_train.dropna(subset=to_drop, inplace=True)
+        df_test.dropna(subset=to_drop, inplace=True)
+        
+    path = input("Enter the path to save the data: ")
+    save(path, df_train)
+    save(path, df_test)
+    
 if __name__=="__main__":
     main()
