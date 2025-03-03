@@ -1,0 +1,94 @@
+Enter the train data file path: C:\Users\Yael Dahari\Tabular-Data\Final_Project\data\laptop_train.csv
+Enter the test data file path: C:\Users\Yael Dahari\Tabular-Data\Final_Project\data\laptop_test.csv  
+Do you wish to generate missing values in the data? (yes/no): yes
+Enter the attributes to generate missing values (separated by commas): Cpu,Company_Cpu,ScreenResolution
+Enter the percentages of missing values to generate (separated by commas): 26,17,20
+
+Null values in the data:
+Train data:
+                  Null Count Percentage
+ScreenResolution         208    19.962%
+Cpu                      270    25.912%
+Company_Cpu              177    16.987%
+
+Test data:
+                  Null Count Percentage
+ScreenResolution          52    19.923%
+Cpu                       67     25.67%
+Company_Cpu               44    16.858%
+
+Now you can choose an attribute to impute.
+However, if you choose an attribute that has a low percentage of null values, the imputations method won't improve the scores by much.
+If you want to stop the process, enter "stop" when asked to enter an attribute.
+
+Enter the attribute to impute: Cpu
+Enter the target attribute: Price
+Error Evaluation Metrics for Different Methods:
+                   R2 Score   MSE Score  RMSE Score MAPE Score  MAE Score  Similarity Score
+Random                0.420  355160.219     595.953    53.466%    450.389             0.871
+Mean                  0.424  352378.778     593.615    53.993%    452.691             0.957
+Median                0.424  352464.090     593.687     54.01%    452.787             0.957
+Frequent              0.425  351711.852     593.053    53.852%    451.975             0.957
+KNN                   0.424  352378.778     593.615    53.993%    452.691             0.957
+Linear Regression     0.417  356952.813     597.455    53.971%    452.951             1.000
+Drop                  0.456  361004.397     600.836    51.107%    455.721               NaN
+
+Advantages and disadvantages of the different methods to consider:
+Random: This was the baseline method. It is simple and fast, but it does not take into account the relationships between the attributes and the distribution of the data.
+If you have a large dataset and the missing values are not significant, this method can be used.
+Also, if the results of the other methods are not significantly better, this method can be used as a fallback.
+
+Mean: This method is simple and fast. It is useful when the data is normally distributed and the missing values are not significant. However, it can cause some distortion in the data.
+Let's consider an example of cars dataset and say the horsepower attribute has missing values. If we fill the missing values with the mean of the horsepower, it may distort the data because both a luxury car and an economy car will get the same horsepower value.
+
+Median: This method is similar to the mean method, but it is more robust to outliers. It is useful when the data is skewed and the missing values are not significant. However, it can also cause some distortion in the data.
+
+Frequent: This method is useful when the data is categorical and the missing values are not significant. It is simple and fast, but it can cause some distortion in the data.
+
+KNN: This method is useful when the data has a complex relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it is computationally expensive and may not work well with high-dimensional data.
+
+Linear Regression: This method is useful when the data has a linear relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it may not work well with non-linear data and may cause overfitting of the data.
+
+Drop: This method is useful when the missing values are insignificant and cannot be imputed. It is simple and fast, but it can cause a loss of information. It should be used when the amount of missing values is small or as a last resort.     
+Enter the method you would like to use (1 for Random, 2 for Mean, 3 for Median, 4 for Frequent, 5 for KNN, 6 for LR, 7 for Drop): 4          
+Enter the attribute to impute: Company_Cpu
+Enter the target attribute: Price
+Error Evaluation Metrics for Different Methods:
+                   R2 Score   MSE Score  RMSE Score MAPE Score  MAE Score  Similarity Score
+Random                0.345  400863.157     633.138    60.607%    492.426             0.911
+Mean                  0.409  362041.728     601.699    53.669%    456.028             0.972
+Median                0.412  359996.010     599.997     53.63%    454.635             0.974
+Frequent              0.417  356953.755     597.456     53.97%    452.950             0.959
+KNN                   0.409  362041.728     601.699    53.669%    456.028             0.972
+Linear Regression     0.417  356952.813     597.455    53.971%    452.951             1.000
+Drop                  0.395  382960.707     618.838    52.246%    462.653               NaN
+
+Advantages and disadvantages of the different methods to consider:
+Random: This was the baseline method. It is simple and fast, but it does not take into account the relationships between the attributes and the distribution of the data.
+If you have a large dataset and the missing values are not significant, this method can be used.
+Also, if the results of the other methods are not significantly better, this method can be used as a fallback.
+
+Mean: This method is simple and fast. It is useful when the data is normally distributed and the missing values are not significant. However, it can cause some distortion in the data.
+Let's consider an example of cars dataset and say the horsepower attribute has missing values. If we fill the missing values with the mean of the horsepower, it may distort the data because both a luxury car and an economy car will get the same horsepower value.
+
+Median: This method is similar to the mean method, but it is more robust to outliers. It is useful when the data is skewed and the missing values are not significant. However, it can also cause some distortion in the data.
+
+Frequent: This method is useful when the data is categorical and the missing values are not significant. It is simple and fast, but it can cause some distortion in the data.
+
+KNN: This method is useful when the data has a complex relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it is computationally expensive and may not work well with high-dimensional data.
+
+Linear Regression: This method is useful when the data has a linear relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it may not work well with non-linear data and may cause overfitting of the data.
+
+Drop: This method is useful when the missing values are insignificant and cannot be imputed. It is simple and fast, but it can cause a loss of information. It should be used when the amount of missing values is small or as a last resort.     
+Enter the method you would like to use (1 for Random, 2 for Mean, 3 for Median, 4 for Frequent, 5 for KNN, 6 for LR, 7 for Drop): 3
+Enter the attribute to impute: ScreenResolution
+Enter the target attribute: Price
+Error Evaluation Metrics for Different Methods:
+                   R2 Score   MSE Score  RMSE Score MAPE Score  MAE Score  Similarity Score
+Random                0.394  370986.210     609.086    54.415%    457.233             0.644
+Mean                  0.434  346256.429     588.436    52.406%    445.151             0.831
+Median                0.435  346125.225     588.324    52.407%    445.214             0.846
+Frequent              0.435  346125.225     588.324    52.407%    445.214             0.846
+KNN                   0.434  346256.429     588.436    52.406%    445.151             0.831
+Linear Regression     0.417  356952.813     597.455    53.971%    452.951               NaN
+Drop                  0.453  342708.499     585.413    51.925%    433.328               NaN
