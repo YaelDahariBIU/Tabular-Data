@@ -1,0 +1,94 @@
+Enter the train data file path: C:\Users\Yael Dahari\Tabular-Data\Final_Project\data\dataset_movies_train.csv
+Enter the test data file path: C:\Users\Yael Dahari\Tabular-Data\Final_Project\data\dataset_movies_test.csv  
+Do you wish to generate missing values in the data? (yes/no): yes
+Enter the attributes to generate missing values (separated by commas): vote_count
+Enter the percentages of missing values to generate (separated by commas): 27
+
+Null values in the data:
+Train data:
+            Null Count Percentage
+vote_count        1159    26.991%
+
+Test data:
+            Null Count Percentage
+vote_count         289    26.909%
+
+Now you can choose an attribute to impute.
+However, if you choose an attribute that has a low percentage of null values, the imputations method won't improve the scores by much.
+If you want to stop the process, enter "q" when asked.
+
+Enter the target attribute: revenue
+Enter the attribute to impute (or 'q' to stop): vote_count
+Error Evaluation Metrics for Different Methods:
+                   R2 Score     MSE Score    RMSE Score     MAPE Score     MAE Score  Similarity Score
+Random                0.457  2.230605e+16  1.493521e+08  18655178.933%  7.252089e+07             0.266
+Mean                  0.670  1.355171e+16  1.164118e+08  12676277.391%  6.022417e+07             0.942
+Median                0.660  1.397116e+16  1.181997e+08  12641606.277%  6.090715e+07             0.949
+Frequent              0.645  1.459126e+16  1.207943e+08  13025157.656%  6.228272e+07             0.945
+KNN                   0.670  1.355171e+16  1.164118e+08  12676277.391%  6.022417e+07             0.942
+Linear Regression     0.644  1.464166e+16  1.210027e+08  13059069.101%  6.239133e+07               NaN
+Drop                  0.765  1.057197e+16  1.028201e+08   7391660.083%  5.179016e+07               NaN
+
+
+Enter the train data file path: C:\Users\Yael Dahari\Tabular-Data\Final_Project\data\dataset_movies_train.csv
+Enter the test data file path: C:\Users\Yael Dahari\Tabular-Data\Final_Project\data\dataset_movies_test.csv  
+Do you wish to generate missing values in the data? (yes/no): yes
+Enter the attributes to generate missing values (separated by commas): popularity
+Enter the percentages of missing values to generate (separated by commas): 27
+
+Null values in the data:
+Train data:
+            Null Count Percentage
+popularity        1159    26.991%
+
+Test data:
+            Null Count Percentage
+popularity         289    26.909%
+
+Now you can choose an attribute to impute.
+However, if you choose an attribute that has a low percentage of null values, the imputations method won't improve the scores by much.
+If you want to stop the process, enter "q" when asked.
+
+Enter the target attribute: revenue
+Enter the attribute to impute (or 'q' to stop): popularity
+Error Evaluation Metrics for Different Methods:
+                   R2 Score     MSE Score    RMSE Score    MAPE Score     MAE Score  Similarity Score
+Random                0.743  1.055641e+16  1.027444e+08  9786954.681%  6.102161e+07             0.858
+Mean                  0.769  9.508524e+15  9.751166e+07   3261684.68%  5.028967e+07             0.989
+Median                0.769  9.502566e+15  9.748111e+07    3285202.4%  5.024842e+07             0.989
+Frequent              0.772  9.389394e+15  9.689889e+07  3556798.371%  4.975744e+07             0.981
+KNN                   0.769  9.508524e+15  9.751166e+07   3261684.68%  5.028967e+07             0.989
+Linear Regression     0.771  9.401966e+15  9.696373e+07  3538641.943%  4.973307e+07               NaN
+Drop                  0.752  9.184230e+15  9.583439e+07  3654256.638%  4.883182e+07               NaN
+
+
+Enter the train data file path: C:\Users\Yael Dahari\Tabular-Data\Final_Project\data\dataset_movies_train.csv
+Enter the test data file path: C:\Users\Yael Dahari\Tabular-Data\Final_Project\data\dataset_movies_test.csv  
+Do you wish to generate missing values in the data? (yes/no): yes
+Enter the attributes to generate missing values (separated by commas): original_language
+Enter the percentages of missing values to generate (separated by commas): 24
+
+Null values in the data:
+Train data:
+                   Null Count Percentage
+original_language        1030    23.987%
+
+Test data:
+                   Null Count Percentage
+original_language         257    23.929%
+
+Now you can choose an attribute to impute.
+However, if you choose an attribute that has a low percentage of null values, the imputations method won't improve the scores by much.
+If you want to stop the process, enter "q" when asked.
+
+Enter the target attribute: revenue
+Enter the attribute to impute (or 'q' to stop): original_language
+Error Evaluation Metrics for Different Methods:
+                   R2 Score     MSE Score    RMSE Score    MAPE Score     MAE Score  Similarity Score
+Random                0.766  9.625766e+15  9.811099e+07  5293974.035%  5.070307e+07             0.169
+Mean                  0.767  9.591680e+15  9.793712e+07    4615680.7%  5.038206e+07             0.784
+Median                0.767  9.590769e+15  9.793247e+07  4500884.677%  5.038047e+07             0.831
+Frequent              0.767  9.590769e+15  9.793247e+07  4500884.677%  5.038047e+07             0.831
+KNN                   0.767  9.591680e+15  9.793712e+07    4615680.7%  5.038206e+07             0.784
+Linear Regression     0.766  9.626978e+15  9.811716e+07  5186399.214%  5.069971e+07               NaN
+Drop                  0.781  8.191049e+15  9.050441e+07  6358954.619%  4.961545e+07               NaN
