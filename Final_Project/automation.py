@@ -1,39 +1,88 @@
+""" Imports """
 import numpy as np
 import pandas as pd 
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-from scipy.stats import ks_2samp
-
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score,mean_squared_error, mean_absolute_percentage_error,mean_absolute_error
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.impute import KNNImputer
-
-import shap
 import category_encoders as ce
-from scipy.stats import skew
-from statsmodels.api import OLS, add_constant
-from sklearn.preprocessing import PowerTransformer
 
 """ Tips for the user """
 def tips():
-    print("\n\033[1mAdvantages and disadvantages of the different methods to consider:\033[0m")
-    print("""\033[1mRandom:\033[0m This was the baseline method. It is simple and fast, but it does not take into account the relationships between the attributes and the distribution of the data.\nIf you have a large dataset and the missing values are not significant, this method can be used.\nAlso, if the results of the other methods are not significantly better, this method can be used as a fallback.
-              
-\033[1mMean:\033[0m This method is simple and fast. It is useful when the data is normally distributed and the missing values are not significant. However, it can cause some distortion in the data. 
-Let's consider an example of cars dataset and say the horsepower attribute has missing values. If we fill the missing values with the mean of the horsepower, it may distort the data because both a luxury car and an economy car will get the same horsepower value.
-                
-\033[1mMedian:\033[0m This method is similar to the mean method, but it is more robust to outliers. It is useful when the data is skewed and the missing values are not significant. However, it can also cause some distortion in the data. 
-                
-\033[1mFrequent:\033[0m This method is useful when the data is categorical and the missing values are not significant. It is simple and fast, but it can cause some distortion in the data.
-                
-\033[1mKNN:\033[0m This method is useful when the data has a complex relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it is computationally expensive and may not work well with high-dimensional data.
-                
-\033[1mLinear Regression:\033[0m This method is useful when the data has a linear relationship between the attributes and the missing values are significant. It takes into account the relationships between the attributes and the distribution of the data. However, it may not work well with non-linear data and may cause overfitting of the data.
-                
-\033[1mDrop:\033[0m This method is useful when the missing values are insignificant and cannot be imputed. It is simple and fast, but it can cause a loss of information. It should be used when the amount of missing values is small or as a last resort.""")
+    tips = """
+    Here are some advantages and disadvantages of the imputation methods:
+
+    1. **Random Imputation**
+        - **Advantages:**
+            - Simple and fast.
+            - Useful for large datasets with small missing data.
+            - Serves as a baseline or fallback method when other methods don’t significantly improve results.
+        - **Disadvantages:**
+            - Does not account for relationships between features.
+            - Can introduce noise and distort patterns.
+            - No statistical basis, potentially leading to unreliable results.
+
+    2. **Mean Imputation**
+        - **Advantages:**
+            - Simple and fast.
+            - Works well with normally distributed data.
+            - No loss of data points.
+        - **Disadvantages:**
+            - Can distort data distributions, especially in skewed data.
+            - Reduces variability, which might affect model performance.
+            - Not suitable for skewed or non-normal distributions.
+
+    3. **Median Imputation**
+        - **Advantages:**
+            - Robust to outliers.
+            - Effective for skewed data.
+            - Helps preserve central tendency without distorting distribution.
+        - **Disadvantages:**
+            - Can still distort data, especially in multimodal distributions.
+            - Less effective in small datasets.
+    
+    4. **Most Frequent (Mode) Imputation**
+        - **Advantages:**
+            - Simple and fast.
+            - Effective for categorical data.
+            - No data loss.
+        - **Disadvantages:**
+            - Ignores relationships between features, causing potential distortion.
+            - Limited to categorical data.
+            - Can over-represent dominant categories.
+
+    5. **K-Nearest Neighbors (KNN) Imputation**
+        - **Advantages:**
+            - Considers relationships between features.
+            - Effective for datasets with complex relationships.
+            - Works for both numerical and categorical data.
+        - **Disadvantages:**
+            - Computationally expensive.
+            - Sensitive to dimensionality (curse of dimensionality).
+            - Requires careful tuning of the number of neighbors (k).
+
+    6. **Linear Regression Imputation**
+        - **Advantages:**
+            - Accounts for relationships between features.
+            - Works well for continuous numerical data with linear relationships.
+            - Can handle datasets with multiple features.
+        - **Disadvantages:**
+            - Assumes linearity, which might not hold for all datasets.
+            - Prone to overfitting if not regularized.
+            - Computationally intensive for large datasets.
+
+    7. **Drop**
+        - **Advantages:**
+            - Simple and fast.
+            - No imputation bias.
+            - Preserves the original data distribution.
+        - **Disadvantages:**
+            - Causes loss of information.
+            - Can introduce bias if data is not missing at random.
+            - Not ideal when a large portion of the data is missing.
+    """
+    print(tips)
+    
 
 """ Loading the data """
 def load_data(file_path):
@@ -359,7 +408,6 @@ def compare_to_org(org_train, org_test, df_array, attribute, is_categorical, mis
 def print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores, sim_scores=None):
     mape_scores = np.array(mape_scores) * 100
     mape_scores = np.round(mape_scores, 3)
-    mape_scores = mape_scores.astype(str) + '%'
     
     methods = ['Random', 'Mean', 'Median', 'Frequent', 'KNN', 'Linear Regression', 'Drop']
     scores = pd.DataFrame({
@@ -371,6 +419,8 @@ def print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores, si
         'Similarity Score': sim_scores
     }, index=methods)
     
+    scores['MAPE Score'] = scores['MAPE Score'].astype(str) + '%'
+    
     if sim_scores is None:
         scores.drop(columns=['Similarity Score'], inplace=True)
     else:
@@ -378,6 +428,11 @@ def print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores, si
     
     print("\033[1mError Evaluation Metrics for Different Methods:\033[0m")
     print(scores)
+    
+""" Evaluate the different methods and print the scores """
+def eval_and_show(df_array, target, sim_scores=None):
+    r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores = compare_fills(df_array, target)
+    print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores, sim_scores)
     
 # """ Colors """
 # class color:
@@ -404,21 +459,41 @@ class Method:
     
 """ Return the imputed data according to the chosen method """
 def get_imputed_data(df_array, method):
-    match method:
-        case 1:
-            return df_array[Method.RANDOM], df_array[Method.RANDOM + 1]
-        case 2:
-            return df_array[Method.MEAN], df_array[Method.MEAN + 1]
-        case 3:
-            return df_array[Method.MEDIAN], df_array[Method.MEDIAN + 1]
-        case 4:
-            return df_array[Method.FREQUENT], df_array[Method.FREQUENT + 1]
-        case 5:
-            return df_array[Method.KNN], df_array[Method.KNN + 1]
-        case 6:
-            return df_array[Method.LINEAR_REGRESSION], df_array[Method.LINEAR_REGRESSION + 1]
-        case 7:
-            return None, None
+    if method == 1:
+        return df_array[Method.RANDOM], df_array[Method.RANDOM + 1]
+    elif method == 2:
+        return df_array[Method.MEAN], df_array[Method.MEAN + 1]
+    elif method == 3:
+        return df_array[Method.MEDIAN], df_array[Method.MEDIAN + 1]
+    elif method == 4:
+        return df_array[Method.FREQUENT], df_array[Method.FREQUENT + 1]
+    elif method == 5:
+        return df_array[Method.KNN], df_array[Method.KNN + 1]
+    elif method == 6:
+        return df_array[Method.LINEAR_REGRESSION], df_array[Method.LINEAR_REGRESSION + 1]
+    elif method == 7:
+        return None, None
+    
+""" Applying All Imputations """
+def apply_all_imputations(df_train, df_test, data_per_attr):
+    to_drop = []
+    for attr, data in data_per_attr:
+        imputed_train = data[0]
+        imputed_test = data[1]
+        
+        # If the user chose the drop method, we need to remove the samples with null values in the attribute
+        if imputed_train is None:
+            to_drop.append(attr)
+            continue
+            
+        df_train[attr] = imputed_train[attr]
+        df_test[attr] = imputed_test[attr]
+        
+    # Drop the null values of the attributes in to_drop
+    if len(to_drop) > 0:
+        df_train.dropna(subset=to_drop, inplace=True)
+        df_test.dropna(subset=to_drop, inplace=True)
+        
     
 """ User Interface """
 def main():
@@ -486,23 +561,7 @@ def main():
         tr_and_tst_per_attr.append((attribute, get_imputed_data(df_array, method)))
         
     # Eventually, save the data according to the chosen methods for each attribute
-    to_drop = []
-    for attr, data in tr_and_tst_per_attr:
-        imputed_train = data[0]
-        imputed_test = data[1]
-        
-        # If the user chose the drop method, we need to remove the samples with null values in the attribute
-        if imputed_train is None:
-            to_drop.append(attr)
-            continue
-            
-        df_train[attr] = imputed_train[attr]
-        df_test[attr] = imputed_test[attr]
-        
-    # Drop the null values of the attributes in to_drop
-    if len(to_drop) > 0:
-        df_train.dropna(subset=to_drop, inplace=True)
-        df_test.dropna(subset=to_drop, inplace=True)
+    apply_all_imputations(df_train, df_test, tr_and_tst_per_attr)
         
     path = input("Enter the path to save the data: ")
     save("train", path, df_train)
