@@ -459,6 +459,7 @@ class Method:
     
 """ Return the imputed data according to the chosen method """
 def get_imputed_data(df_array, method):
+    print("Imputed data retrieved successfully.")
     if method == 1:
         return df_array[Method.RANDOM], df_array[Method.RANDOM + 1]
     elif method == 2:
@@ -493,6 +494,8 @@ def apply_all_imputations(df_train, df_test, data_per_attr):
     if len(to_drop) > 0:
         df_train.dropna(subset=to_drop, inplace=True)
         df_test.dropna(subset=to_drop, inplace=True)
+        
+    print("Imputations applied successfully.")
         
     
 """ User Interface """
