@@ -29,7 +29,7 @@ bar_width = 0.12  # Width of bars
 x = np.arange(num_datasets)
 
 # Use seaborn color palette
-colors = sns.color_palette("husl", num_methods)
+colors = sns.color_palette("Accent", num_methods)
 
 # Plot bars for each method
 for i, method in enumerate(df.columns[1:]):  # Skip 'Dataset' column
