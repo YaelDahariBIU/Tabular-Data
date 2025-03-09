@@ -1,4 +1,10 @@
-""" Imports """
+""" 
+Data Imputation and Preprocessing Script
+
+This script provides functionality for loading, imputing, and saving datasets. It includes
+different imputation methods along with their advantages and disadvantages.
+"""
+
 import numpy as np
 import pandas as pd 
 from sklearn.linear_model import LinearRegression
@@ -7,8 +13,20 @@ from sklearn.preprocessing import OrdinalEncoder
 from sklearn.impute import KNNImputer
 import category_encoders as ce
 
-""" Tips for the user """
+""" Tips for choosing the imputation method """
 def tips():
+    """ 
+    Prints a list of advantages and disadvantages of various imputation methods.
+
+    Imputation methods covered:
+    1. Random Imputation
+    2. Mean Imputation
+    3. Median Imputation
+    4. Most Frequent (Mode) Imputation
+    5. K-Nearest Neighbors (KNN) Imputation
+    6. Linear Regression Imputation
+    7. Drop Missing Values
+    """
     tips = """
     Here are some advantages and disadvantages of the imputation methods:
 
@@ -86,18 +104,46 @@ def tips():
 
 """ Loading the data """
 def load_data(file_path):
+    """ 
+    Loads a CSV file into a pandas DataFrame.
+    
+    Parameters:
+        file_path (str): The path to the CSV file.
+    
+    Returns:
+        pd.DataFrame: The loaded dataset.
+    """
     df = pd.read_csv(file_path)
     return df
 
 """ Saving the data """
 def save(name, path, df, index=False):
+    """ 
+    Saves a DataFrame to a CSV file.
+    
+    Parameters:
+        name (str): The filename prefix for the saved file.
+        path (str): The directory where the file will be saved.
+        df (pd.DataFrame): The DataFrame to be saved.
+        index (bool, optional): Whether to include the index in the saved CSV file. Defaults to False.
+    
+    Returns:
+        None
+    """
     path = path + name + "_imputed.csv"
     df.to_csv(path, index=index)
     print(f"Data saved to {path}")
     return
 
 """ Explore the nulls in the data """
-def show_nulls(df_train, df_test):        
+def show_nulls(df_train, df_test):  
+    """
+    Display the count and percentage of missing values in the training and test datasets.
+    
+    Parameters:
+    df_train (pd.DataFrame): Training dataset
+    df_test (pd.DataFrame): Test dataset
+    """      
     print('Train data:')
     train_nulls = df_train.isnull().sum()
     train_nulls_percentage = (train_nulls / len(df_train)) * 100
@@ -122,7 +168,19 @@ def show_nulls(df_train, df_test):
 """ Artificially creating missing values """
 
 # Create missing values in the data using the Missing Completely at Random (MCAR) mechanism
-def create_mcar(df_train, df_test, attributes, percentages):    
+def create_mcar(df_train, df_test, attributes, percentages):
+    """
+    Artificially introduce missing values into specified attributes using the Missing Completely at Random (MCAR) mechanism.
+    
+    Parameters:
+    df_train (pd.DataFrame): Training dataset
+    df_test (pd.DataFrame): Test dataset
+    attributes (list): List of attribute names where missing values will be introduced
+    percentages (list): Corresponding list of percentages of values to be set as NaN
+    
+    Returns:
+    tuple: Modified df_train, df_test, missing_train indices, missing_test indices
+    """    
     for attribute, percentage in zip(attributes, percentages):
         percentage = float(percentage) / 100  # Convert percentage to a fraction
         
@@ -143,6 +201,14 @@ def create_mcar(df_train, df_test, attributes, percentages):
 
 # Drop the rows with missing values
 def drop_missing_values(df_train, df_test, attribute):
+    """
+    Remove rows containing missing values for the specified attribute.
+    
+    Parameters:
+    df_train (pd.DataFrame): Training dataset
+    df_test (pd.DataFrame): Test dataset
+    attribute (str): Attribute to check for missing values
+    """
     df_train.dropna(subset=[attribute], inplace=True)
     df_test.dropna(subset=[attribute], inplace=True)
     
@@ -150,6 +216,14 @@ def drop_missing_values(df_train, df_test, attribute):
 
 # Fill missing values with a random value between the minimum and maximum values of the attribute
 def fill_randomly(df_train, df_test, attribute):
+    """
+    Fill missing values with a random value between the attribute's minimum and maximum values.
+    
+    Parameters:
+    df_train (pd.DataFrame): Training dataset
+    df_test (pd.DataFrame): Test dataset
+    attribute (str): Attribute to fill missing values for
+    """
     min_val = df_train[attribute].min()
     max_val = df_train[attribute].max()
     
@@ -160,6 +234,14 @@ def fill_randomly(df_train, df_test, attribute):
 
 # Fill missing values with the mean value of the attribute
 def fill_with_mean(df_train, df_test, attribute):
+    """
+    Fill missing values with the mean of the attribute.
+    
+    Parameters:
+    df_train (pd.DataFrame): Training dataset
+    df_test (pd.DataFrame): Test dataset
+    attribute (str): Attribute to fill missing values for
+    """
     mean_val = df_train[attribute].mean()
     
     df_train[attribute] = df_train[attribute].fillna(mean_val)
@@ -169,6 +251,14 @@ def fill_with_mean(df_train, df_test, attribute):
 
 # Fill missing values with the median value of the attribute
 def fill_with_median(df_train, df_test, attribute):
+    """
+    Fill missing values with the median of the attribute.
+    
+    Parameters:
+    df_train (pd.DataFrame): Training dataset
+    df_test (pd.DataFrame): Test dataset
+    attribute (str): Attribute to fill missing values for
+    """
     median_val = df_train[attribute].median()
     
     df_train[attribute] = df_train[attribute].fillna(median_val)
@@ -178,6 +268,14 @@ def fill_with_median(df_train, df_test, attribute):
 
 # Fill missing values with the most frequent value of the attribute
 def fill_with_freq(df_train, df_test, attribute):
+    """
+    Fill missing values with the most frequent (mode) value of the attribute.
+    
+    Parameters:
+    df_train (pd.DataFrame): Training dataset
+    df_test (pd.DataFrame): Test dataset
+    attribute (str): Attribute to fill missing values for
+    """
     freq_val = df_train[attribute].mode()[0] # mode returns a series, so we need to get the first value
     
     df_train[attribute] = df_train[attribute].fillna(freq_val)
@@ -187,6 +285,15 @@ def fill_with_freq(df_train, df_test, attribute):
 
 # Fill missing values using KNN imputation
 def fill_with_knn(df_train, df_test, attribute, is_categorical):
+    """
+    Fill missing values using K-Nearest Neighbors (KNN) imputation.
+    
+    Parameters:
+    df_train (pd.DataFrame): Training dataset
+    df_test (pd.DataFrame): Test dataset
+    attribute (str): Attribute to fill missing values for
+    is_categorical (bool): Whether the attribute is categorical
+    """
     if is_categorical:
         # Convert categorical data to numerical data using OrdinalEncoder
         encoder = OrdinalEncoder()
@@ -207,6 +314,15 @@ def fill_with_knn(df_train, df_test, attribute, is_categorical):
 
 # Fill missing values using linear regression
 def fill_with_linear_regression(df_train, df_test, attribute, target):
+    """
+    Fill missing values using linear regression, predicting the missing values based on other features.
+    
+    Parameters:
+    df_train (pd.DataFrame): Training dataset
+    df_test (pd.DataFrame): Test dataset
+    attribute (str): Attribute to fill missing values for
+    target (str): Target variable used for prediction
+    """
     df_train = pd.get_dummies(df_train, drop_first=True)
     df_test = pd.get_dummies(df_test, drop_first=True)
     
@@ -254,6 +370,18 @@ def fill_with_linear_regression(df_train, df_test, attribute, target):
 
 """ Training the model and making predictions """
 def train_and_predict(df_train, df_test, target):
+    """
+    Trains a linear regression model and makes predictions on the test set.
+    
+    Parameters:
+    - df_train: DataFrame, training dataset including the target variable.
+    - df_test: DataFrame, testing dataset including the target variable.
+    - target: str, the name of the target column.
+    
+    Returns:
+    - y_test: Series, actual target values from the test set.
+    - y_pred: Series, predicted target values from the trained model.
+    """
     X_train = df_train.drop(columns=target)
     encoder = ce.OrdinalEncoder()
     # If there are any categorical columns, convert them to numerical using one-hot encoding
@@ -279,32 +407,50 @@ def train_and_predict(df_train, df_test, target):
 
 # R2 Score
 def eval_r2(y_test, y_pred):
+    """Calculates and returns the R² score."""
     r2 = r2_score(y_test, y_pred)
     return r2
 
 # Mean Squared Error
 def eval_mse(y_test, y_pred):
+    """Calculates and returns the Mean Squared Error (MSE)."""
     mse = mean_squared_error(y_test, y_pred)
     return mse
 
 # Mean Absolute Percentage Error
 def eval_mape(y_test, y_pred):
+    """Calculates and returns the Mean Absolute Percentage Error (MAPE)."""
     mape = mean_absolute_percentage_error(y_test, y_pred)
     return mape
 
 # Mean Absolute Error
 def eval_mae(y_test, y_pred):
+    """Calculates and returns the Mean Absolute Error (MAE)."""
     mae = mean_absolute_error(y_test, y_pred)
     return mae
 
 # Root Mean Squared Error
 def eval_rmse(y_test, y_pred):
+    """Calculates and returns the Root Mean Squared Error (RMSE)."""
     rmse = np.sqrt(mean_squared_error(y_test, y_pred))
     return rmse
 
 """ Imputing missing values using different methods """
 
 def try_all_methods(df_train, df_test, attribute, target, is_categorical):
+    """
+    Applies different imputation methods to handle missing values.
+    
+    Parameters:
+    - df_train: DataFrame, training dataset with missing values.
+    - df_test: DataFrame, testing dataset with missing values.
+    - attribute: str, the column containing missing values.
+    - target: str, the name of the target variable.
+    - is_categorical: bool, whether the attribute is categorical.
+    
+    Returns:
+    - List of DataFrames, each containing imputed values using different methods.
+    """
     df_train_lr = df_train.copy()
     df_test_lr = df_test.copy()
     fill_with_linear_regression(df_train_lr, df_test_lr, attribute, target)
@@ -339,6 +485,16 @@ def try_all_methods(df_train, df_test, attribute, target, is_categorical):
 """ Comparing the performance of different methods """
 
 def compare_fills(df_array, target):
+    """
+    Compares the performance of different imputation methods based on model evaluation metrics.
+    
+    Parameters:
+    - df_array: list of DataFrames, each pair represents training and test datasets.
+    - target: str, the target variable.
+    
+    Returns:
+    - Tuple of pandas Series containing R², MSE, MAPE, MAE, and RMSE scores for each method.
+    """
     methods = ['Random', 'Mean', 'Median', 'Frequent', 'KNN', 'Linear Regression', 'Drop']
     r2_scores = np.zeros(len(df_array) // 2)
     mse_scores = np.zeros(len(df_array) // 2)
@@ -364,6 +520,19 @@ def compare_fills(df_array, target):
 
 # Compare the imputed data to the original data
 def compare_to_org(org_train, org_test, df_array, attribute, is_categorical, missing_train, missing_test):
+    """
+    Compares imputed values to original values and computes similarity scores.
+    
+    Parameters:
+    - org_train, org_test: DataFrames, original datasets before missing values were introduced.
+    - df_array: list of DataFrames, datasets with imputed values.
+    - attribute: str, column with missing values.
+    - is_categorical: bool, whether the attribute is categorical.
+    - missing_train, missing_test: indices of missing values.
+    
+    Returns:
+    - NumPy array of similarity scores for each imputation method.
+    """
     sim_scores = np.zeros(len(df_array) // 2)
     
     if is_categorical:  
@@ -406,6 +575,17 @@ def compare_to_org(org_train, org_test, df_array, attribute, is_categorical, mis
 """ Plotting the scores """
 
 def print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores, sim_scores=None):
+    """
+    Prints the performance scores of different imputation methods.
+
+    Parameters:
+    - r2_scores: List of R2 scores.
+    - mse_scores: List of Mean Squared Error (MSE) scores.
+    - mape_scores: List of Mean Absolute Percentage Error (MAPE) scores.
+    - mae_scores: List of Mean Absolute Error (MAE) scores.
+    - rmse_scores: List of Root Mean Squared Error (RMSE) scores.
+    - sim_scores: List of similarity scores (optional, for MCAR data).
+    """
     mape_scores = np.array(mape_scores) * 100
     mape_scores = np.round(mape_scores, 3)
     
@@ -431,24 +611,22 @@ def print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores, si
     
 """ Evaluate the different methods and print the scores """
 def eval_and_show(df_array, target, sim_scores=None):
+    """
+    Evaluates imputation methods and prints their scores.
+    
+    Parameters:
+    - df_array: List of imputed datasets.
+    - target: Target variable for evaluation.
+    - sim_scores: Similarity scores for MCAR data (optional).
+    """
     r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores = compare_fills(df_array, target)
     print_scores(r2_scores, mse_scores, mape_scores, mae_scores, rmse_scores, sim_scores)
-    
-# """ Colors """
-# class color:
-#    PURPLE = '\033[95m'
-#    CYAN = '\033[96m'
-#    DARKCYAN = '\033[36m'
-#    BLUE = '\033[94m'
-#    GREEN = '\033[92m'
-#    YELLOW = '\033[93m'
-#    RED = '\033[91m'
-#    BOLD = '\033[1m'
-#    UNDERLINE = '\033[4m'
-#    END = '\033[0m'
 
 """ Mapping the Methods to Indexes """
 class Method:
+    """
+    Enum-like class to map imputation methods to index values.
+    """
     RANDOM = 0
     MEAN = 2
     MEDIAN = 4
@@ -459,6 +637,16 @@ class Method:
     
 """ Return the imputed data according to the chosen method """
 def get_imputed_data(df_array, method):
+    """
+    Retrieves the imputed dataset based on the selected method.
+    
+    Parameters:
+    - df_array: List of imputed datasets.
+    - method: Integer representing the imputation method.
+    
+    Returns:
+    - Tuple of imputed training and test data.
+    """
     print("Imputed data retrieved successfully.")
     if method == 1:
         return df_array[Method.RANDOM], df_array[Method.RANDOM + 1]
@@ -477,6 +665,14 @@ def get_imputed_data(df_array, method):
     
 """ Applying All Imputations """
 def apply_all_imputations(df_train, df_test, data_per_attr):
+    """
+    Applies the selected imputations to the datasets.
+    
+    Parameters:
+    - df_train: Training dataset.
+    - df_test: Test dataset.
+    - data_per_attr: List of tuples (attribute, imputed data).
+    """
     to_drop = []
     for attr, data in data_per_attr:
         imputed_train = data[0]
@@ -500,6 +696,9 @@ def apply_all_imputations(df_train, df_test, data_per_attr):
     
 """ User Interface """
 def main():
+    """
+    User interface for loading data, performing imputations, and saving results.
+    """
     # Load the data
     path_train = input("Enter the train data file path: ")
     df_train = load_data(path_train)
